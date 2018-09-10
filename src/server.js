@@ -1,6 +1,5 @@
 import App from './App';
 import React from 'react';
-import { StaticRouter } from 'react-router-dom';
 import express from 'express';
 import { renderToString } from 'react-dom/server';
 
@@ -13,9 +12,7 @@ server
   .get('/*', (req, res) => {
     const context = {};
     const markup = renderToString(
-      <StaticRouter context={context} location={req.url}>
         <App />
-      </StaticRouter>
     );
 
     if (context.url) {
@@ -27,8 +24,9 @@ server
     <head>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta charset="utf-8" />
-        <title>Welcome to Razzle</title>
+        <title>Message Board</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
         ${
           assets.client.css
             ? `<link rel="stylesheet" href="${assets.client.css}">`
