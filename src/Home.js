@@ -20,12 +20,25 @@ class Home extends React.Component {
         <section className='col s8'>
           <h5>Enter a message to begin</h5>
           <label>Enter your message</label>
-          <input onKeyPress={this.handleNewMessage}/>
+          <input onKeyPress={this.handleNewMessage} />
         </section>
-        <br/>
-        <section className='col s12'>
+        <br />
+        <section className='col s8'>
           <ul className='collection'>
-          {messages.list.map(m => <li className='collection-item'>{m.text}</li>)}
+            {messages.list.map(m => <li className='collection-item'>
+              <p>{m.text}</p>
+              <span style={{position: 'relative'}}>               
+                 <span>1</span>
+                <i className='material-icons'>thumb_up</i>
+                </span>
+
+              <span style={{position: 'relative'}}>               
+                <span style={{ padding: '16px' }}></span>
+                {2}
+                <i className='material-icons'>thumb_down</i>
+              </span>
+
+            </li>)}
           </ul>
         </section>
       </main>
@@ -38,8 +51,8 @@ export default Home;
 class Messages {
   @observable
   list
-  constructor(){
-    this.list = [];
+  constructor() {
+    this.list = [new Message('hlo')];
   }
 }
 class Message {
