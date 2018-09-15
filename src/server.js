@@ -1,5 +1,6 @@
 import App from './App';
 import React from 'react';
+import { join } from 'path';
 import express from 'express';
 import { renderToString } from 'react-dom/server';
 
@@ -9,10 +10,10 @@ const server = express();
 server
   .disable('x-powered-by')
   .use(express.static(process.env.RAZZLE_PUBLIC_DIR))
-  .get('/*', (req, res) => {
+  .get('/', (req, res) => {
     const context = {};
     const markup = renderToString(
-        <App />
+      <App />
     );
 
     if (context.url) {
@@ -29,14 +30,14 @@ server
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         ${
-          assets.client.css
-            ? `<link rel="stylesheet" href="${assets.client.css}">`
-            : ''
+        assets.client.css
+          ? `<link rel="stylesheet" href="${assets.client.css}">`
+          : ''
         }
         ${
-          process.env.NODE_ENV === 'production'
-            ? `<script src="${assets.client.js}" defer></script>`
-            : `<script src="${assets.client.js}" defer crossorigin></script>`
+        process.env.NODE_ENV === 'production'
+          ? `<script src="${assets.client.js}" defer></script>`
+          : `<script src="${assets.client.js}" defer crossorigin></script>`
         }
     </head>
     <body>
@@ -45,6 +46,11 @@ server
 </html>`
       );
     }
-  });
+  })
+  .use('*', (req, res) => {
+    let asset = req.originalUrl.substring(req.originalUrl.indexOf('/static'))
+    asset = join('./build/public/', asset);
+    res.download(asset)
+  })
 
 export default server;
