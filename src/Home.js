@@ -27,16 +27,9 @@ class Home extends React.Component {
           <ul className='collection'>
             {messages.list.map(m => <li className='collection-item'>
               <p>{m.text}</p>
-              <span style={{position: 'relative'}}>               
-                 <span>1</span>
-                <i className='material-icons'>thumb_up</i>
-                </span>
-
-              <span style={{position: 'relative'}}>               
-                <span style={{ padding: '16px' }}></span>
-                {2}
-                <i className='material-icons'>thumb_down</i>
-              </span>
+              <Ratings icon='thumb_up' points={m.upPoints} />
+              <span style={{ marginLeft: '48px' }}></span>
+              <Ratings icon='thumb_down' points={m.downPoints} />
 
             </li>)}
           </ul>
@@ -48,6 +41,13 @@ class Home extends React.Component {
 
 export default Home;
 
+const Ratings = ({ points, icon }) => (
+  <span style={{ position: 'relative' }}>
+    <span>{points}</span>
+    <i className='handIcon material-icons'>{icon}</i>
+  </span>
+)
+
 class Messages {
   @observable
   list
@@ -58,8 +58,14 @@ class Messages {
 class Message {
   @observable
   text
+  @observable
+  upPoints
+  @observable
+  downPoints
   constructor(message) {
-    this.text = message
+    this.text = message;
+    this.upPoints = 0;
+    this.downPoints = 0;
   }
 }
 
