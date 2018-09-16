@@ -32,6 +32,9 @@ server
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta charset="utf-8" />
         <title>Message Board</title>
+        <script>
+        navigator.serviceWorker.register('worker.js').then(e => console.log('registered')).catch(console.log)
+        </script>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -48,6 +51,10 @@ server
         <script>
         window.__INITIAL_DATA__=${JSON.stringify(state)} 
         </script>
+        <script>
+        window.addEventListener('online', alert)
+        window.addEventListener('offline', alert)
+        </script>
     </head>
     <body>
         <div id="root">${markup}</div>
@@ -55,6 +62,9 @@ server
 </html>`
       );
     }
+  })
+  .get('/worker.js', (req, res) => {
+      res.download('./src/worker.js')
   })
   .use('*', (req, res) => {
     let asset = req.originalUrl.substring(req.originalUrl.indexOf('/static'))
