@@ -6,12 +6,42 @@ import './Home.css';
 @observer
 class Home extends React.Component {
 
+  constructor(props) {
+    super(props);
+    if (props.state && props.state.list && props.state.list.forEach) {
+      props.state.list.forEach(m => {
+        let message = new Message(m.text, m.upPoints, m.downPoints);
+        messages.list.push(message);
+      })
+    }
+  }
+
   handleNewMessage = e => {
     if (e.key === 'Enter') {
       messages.list.push(new Message(e.target.value));
       e.target.value = '';
       console.log(messages)
     }
+  }
+
+  incrementPoints = message => {
+    message.upPoints++;
+    this.saveState()
+  }
+
+  decrementPoints = message => {
+    message.downPoints++;
+  }
+
+  saveState = () => {
+    fetch('/api/state', {
+      method: "POST",
+      headers: new Headers({
+        'Content-Type': 'application/json'
+      }),
+      credentials: "same-origin",
+      body: JSON.stringify(messages)
+    })
   }
 
   render() {
@@ -27,9 +57,9 @@ class Home extends React.Component {
           <ul className='collection'>
             {messages.list.map(m => <li className='collection-item'>
               <p>{m.text}</p>
-              <Ratings icon='thumb_up' points={m.upPoints} />
+              <Ratings onClick={() => this.incrementPoints(m)} icon='thumb_up' points={m.upPoints} />
               <span style={{ marginLeft: '48px' }}></span>
-              <Ratings icon='thumb_down' points={m.downPoints} />
+              <Ratings onClick={() => this.decrementPoints(m)} icon='thumb_down' points={m.downPoints} />
 
             </li>)}
           </ul>
@@ -41,8 +71,8 @@ class Home extends React.Component {
 
 export default Home;
 
-const Ratings = ({ points, icon }) => (
-  <span style={{ position: 'relative' }}>
+const Ratings = ({ points, icon, onClick }) => (
+  <span onClick={onClick} style={{ position: 'relative' }}>
     <span>{points}</span>
     <i className='handIcon material-icons'>{icon}</i>
   </span>
@@ -52,7 +82,7 @@ class Messages {
   @observable
   list
   constructor() {
-    this.list = [new Message('hlo')];
+    this.list = [];
   }
 }
 class Message {
@@ -62,10 +92,11 @@ class Message {
   upPoints
   @observable
   downPoints
-  constructor(message) {
+  constructor(message, upPoints = 0, downPoints = 0) {
+    console.log(message, upPoints, downPoints)
     this.text = message;
-    this.upPoints = 0;
-    this.downPoints = 0;
+    this.upPoints = upPoints;
+    this.downPoints = downPoints;
   }
 }
 

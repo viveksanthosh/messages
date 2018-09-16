@@ -1,4 +1,5 @@
 .handIcon{
+    cursor: pointer;
     position: absolute;
     top: -3px;
     margin-left: 5px;

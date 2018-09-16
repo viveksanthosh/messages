@@ -2,18 +2,24 @@ import App from './App';
 import React from 'react';
 import { join } from 'path';
 import express from 'express';
+import { router, getState } from './api';
 import { renderToString } from 'react-dom/server';
+var bodyParser = require('body-parser')
 
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 
 const server = express();
+
 server
+  .use(bodyParser.json({ limit: '5mb' }))
   .disable('x-powered-by')
+  .use('/api', router)
   .use(express.static(process.env.RAZZLE_PUBLIC_DIR))
   .get('/', (req, res) => {
     const context = {};
+    let state = getState();
     const markup = renderToString(
-      <App />
+      <App state={state} />
     );
 
     if (context.url) {
@@ -39,6 +45,9 @@ server
           ? `<script src="${assets.client.js}" defer></script>`
           : `<script src="${assets.client.js}" defer crossorigin></script>`
         }
+        <script>
+        window.__INITIAL_DATA__=${JSON.stringify(state)} 
+        </script>
     </head>
     <body>
         <div id="root">${markup}</div>
